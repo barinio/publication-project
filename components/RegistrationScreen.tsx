@@ -1,68 +1,97 @@
 import { useState } from "react";
 import {
+  ImageBackground,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
-const Registration = () => {
-  const [login, setLogin] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+};
+type NavigationProp = StackNavigationProp<RootStackParamList, "Login">;
+
+import bgImage from "../assets/bg-auth.jpg";
+import { Formik } from "formik";
+
+const Register = () => {
+  const navigation = useNavigation<NavigationProp>();
 
   const onAvatarAdd = () => {};
   const onShowPassword = () => {};
-  const onRegistration = () => {};
-  const onLogin = () => {};
 
   return (
-    <View style={s.container}>
-      <View style={s.avatarBox}>
-        <TouchableOpacity onPress={onAvatarAdd} style={s.iconAdd}>
-          <Ionicons name="add-circle-outline" size={25} color="#FF6C00" />
-        </TouchableOpacity>
-      </View>
-      <Text style={[s.text, { fontWeight: "500" }]}>Реєстрація</Text>
-      <View style={s.form}>
-        <TextInput
-          placeholder="Логін"
-          value={login}
-          onChangeText={setLogin}
-          style={s.input}
-        />
-        <TextInput
-          placeholder="Адреса електронної пошти"
-          value={email}
-          onChangeText={setEmail}
-          style={s.input}
-        />
-        <View>
-          <TextInput
-            placeholder="Пароль"
-            value={password}
-            onChangeText={setPassword}
-            style={s.input}
-          />
-          <TouchableOpacity onPress={onShowPassword} style={s.showPassword}>
-            <Text style={s.showPasswordText}>Показати</Text>
-          </TouchableOpacity>
+    <View>
+      <ImageBackground source={bgImage} resizeMode="cover" style={s.image}>
+        <View style={s.container}>
+          <View style={s.avatarBox}>
+            <TouchableOpacity onPress={onAvatarAdd} style={s.iconAdd}>
+              <Ionicons name="add-circle-outline" size={25} color="#FF6C00" />
+            </TouchableOpacity>
+          </View>
+          <Text style={[s.text, { fontWeight: "500" }]}>Реєстрація</Text>
+          <Formik
+            initialValues={{ login: "", email: "", password: "" }}
+            onSubmit={(values) => console.log(values)}
+          >
+            {(props) => (
+              <View style={s.form}>
+                <TextInput
+                  placeholder="Логін"
+                  value={props.values.login}
+                  onChangeText={props.handleChange("login")}
+                  style={s.input}
+                />
+                <TextInput
+                  placeholder="Адреса електронної пошти"
+                  value={props.values.email}
+                  onChangeText={props.handleChange("email")}
+                  style={s.input}
+                />
+                <View>
+                  <TextInput
+                    placeholder="Пароль"
+                    value={props.values.password}
+                    onChangeText={props.handleChange("password")}
+                    style={s.input}
+                  />
+                  <Pressable onPress={onShowPassword} style={s.showPassword}>
+                    <Text style={s.showPasswordText}>Показати</Text>
+                  </Pressable>
+                </View>
+                <TouchableOpacity
+                  // onPress={props.handleSubmit}
+                  onPress={() => navigation.navigate("Home")}
+                  style={s.btn}
+                >
+                  <Text style={s.btnText}>Зареєстуватися</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text style={s.register}>Вже є акаунт? Увійти</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </Formik>
         </View>
-        <TouchableOpacity onPress={onRegistration} style={s.btn}>
-          <Text style={s.btnText}>Зареєстуватися</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onLogin}>
-          <Text style={s.exists}>Вже є акаунт? Увійти</Text>
-        </TouchableOpacity>
-      </View>
+      </ImageBackground>
     </View>
   );
 };
 
 const s = StyleSheet.create({
   container: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
     height: 549,
     backgroundColor: "#FFFFFF",
     marginTop: 263,
@@ -71,6 +100,9 @@ const s = StyleSheet.create({
     paddingTop: 92,
     paddingBottom: 78,
     paddingHorizontal: 16,
+  },
+  image: {
+    height: "100%",
   },
   avatarBox: {
     position: "absolute",
@@ -110,7 +142,7 @@ const s = StyleSheet.create({
   showPassword: {
     position: "absolute",
     right: 16,
-    top: 16,
+    bottom: 15,
   },
   showPasswordText: {
     color: "#1B4371",
@@ -128,7 +160,7 @@ const s = StyleSheet.create({
     fontSize: 16,
     lineHeight: 18.75,
   },
-  exists: {
+  register: {
     fontSize: 16,
     lineHeight: 18.75,
     color: "#1B4371",
@@ -136,4 +168,4 @@ const s = StyleSheet.create({
   },
 });
 
-export default Registration;
+export default Register;
